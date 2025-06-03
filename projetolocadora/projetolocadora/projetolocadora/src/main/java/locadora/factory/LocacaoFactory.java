@@ -9,7 +9,7 @@ import locadora.model.Locacao;
 public class LocacaoFactory {
     public static Locacao criar(Cliente cliente, Filme filme, String dataAluguel, String dataDevolucao, double valor,
             String status, int id)
-            throws Exception {
+            throws InvalidAttributesException {
         dataAluguel = validaTexto(dataAluguel);
         dataDevolucao = validaTexto(dataDevolucao);
 

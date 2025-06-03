@@ -6,7 +6,7 @@ import locadora.model.Filme;
 
 public class FilmeFactory {
     public static Filme criar(String titulo, String genero, int anoLancamento, int duracao, boolean disponivel, int id)
-            throws Exception {
+            throws InvalidAttributesException {
         titulo = validaTexto(titulo);
         genero = validaTexto(genero);
 

@@ -20,7 +20,7 @@
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 
             <!-- URL de conexão com o banco de dados MySQL -->
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/locadora?useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/locadora?useSSL=false&amp;serverTimezone=UTC"/>
 
             <!-- Usuário do banco de dados MySQL -->
             <property name="javax.persistence.jdbc.user" value="root"/>

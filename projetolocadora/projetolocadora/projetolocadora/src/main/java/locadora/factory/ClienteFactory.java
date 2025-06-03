@@ -5,8 +5,8 @@ import javax.naming.directory.InvalidAttributesException;
 import locadora.model.Cliente;
 
 public class ClienteFactory {
-    public static Cliente criar(String nome, String cpf, String telefone, String endereco, String email, int id)
-            throws Exception {
+    public static Cliente criar(String nome, String cpf, String telefone, String endereco, String email)
+            throws InvalidAttributesException {
         nome = validaTexto(nome);
         cpf = validaTexto(cpf);
         telefone = validaTexto(telefone);
@@ -19,7 +19,7 @@ public class ClienteFactory {
         validaCampoObrigatorio(telefone, "Telefone é obrigatório");
         validaCampoObrigatorio(email, "E-mail é obrigatório");
 
-        return new Cliente(nome, cpf, telefone, endereco, email, id);
+        return new Cliente(nome, cpf, telefone, endereco, email, 0);
     }
 
     private static String validaTexto(String texto) {
