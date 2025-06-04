@@ -1,10 +1,14 @@
 package locadora.dal;
 
 import locadora.model.Locacao;
+import locadora.util.SerializacaoUtil;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+
+import java.io.IOException;
 import java.util.List;
 
 public class LocacaoDAO implements InterfaceDAO<Locacao> {
@@ -14,6 +18,25 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
     public LocacaoDAO() {
         this.emf = Persistence.createEntityManagerFactory("java");
         this.em = emf.createEntityManager();
+
+        if (buscarTodos().isEmpty()) {
+            List<Locacao> locacoesRestauradas = desserializarLocacoes();
+            if (locacoesRestauradas != null) {
+                for (Locacao locacao : locacoesRestauradas) {
+                    try {
+                        em.getTransaction().begin();
+                        em.persist(locacao);
+                        em.getTransaction().commit();
+                    } catch (PersistenceException e) {
+                        em.getTransaction().rollback();
+                        System.out.println("Erro de persistência ao restaurar locação: " + e.getMessage());
+                    } catch (IllegalArgumentException e) {
+                        em.getTransaction().rollback();
+                        System.out.println("Erro de argumento ao restaurar locação: " + e.getMessage());
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -22,6 +45,7 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
             em.getTransaction().begin();
             em.persist(locacao);
             em.getTransaction().commit();
+            serializarLocacoes(); // <-- serializa após salvar
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
             throw new PersistenceException("Erro ao salvar locação: " + e.getMessage(), e);
@@ -34,6 +58,7 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
             em.getTransaction().begin();
             em.merge(locacao);
             em.getTransaction().commit();
+            serializarLocacoes(); // <-- serializa após atualizar
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
             throw new PersistenceException("Erro ao atualizar locação: " + e.getMessage(), e);
@@ -51,6 +76,7 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
                 throw new IllegalArgumentException("Locação com ID " + id + " não encontrada.");
             }
             em.getTransaction().commit();
+            serializarLocacoes(); // <-- serializa após deletar
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
             throw new PersistenceException("Erro ao deletar locação: " + e.getMessage(), e);
@@ -72,6 +98,24 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
             return em.createQuery("SELECT l FROM Locacao l", Locacao.class).getResultList();
         } catch (PersistenceException e) {
             throw new PersistenceException("Erro ao buscar todas as locações: " + e.getMessage(), e);
+        }
+    }
+
+    private void serializarLocacoes() {
+        try {
+            List<Locacao> locacoes = buscarTodos();
+            SerializacaoUtil.salvarLista(locacoes, "data/locacoes.ser");
+        } catch (IOException e) {
+            System.out.println("Erro ao serializar locações: " + e.getMessage());
+        }
+    }
+
+    public List<Locacao> desserializarLocacoes() {
+        try {
+            return SerializacaoUtil.carregarLista("data/locacoes.ser");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Erro ao desserializar locações: " + e.getMessage());
+            return null;
         }
     }
 

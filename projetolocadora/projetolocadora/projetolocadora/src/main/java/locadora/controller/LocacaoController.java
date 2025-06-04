@@ -7,6 +7,7 @@ import locadora.factory.LocacaoFactory;
 import locadora.model.Locacao;
 import locadora.model.Cliente;
 import locadora.model.Filme;
+import locadora.util.LoggerUtil;
 
 import java.util.List;
 
@@ -32,11 +33,16 @@ public class LocacaoController {
 
             Locacao locacao = LocacaoFactory.criar(cliente, filme, dataAluguel, dataDevolucao, valor, status, id);
             locacaoDAO.salvar(locacao);
+            LoggerUtil
+                    .log("Locação realizada: Cliente ID " + clienteId + ", Filme ID " + filmeId + ", Locação ID " + id);
         } catch (InvalidAttributesException e) {
+            LoggerUtil.log("Erro ao adicionar locação: " + e.getMessage());
             System.out.println("Erro ao adicionar locação: " + e.getMessage());
         } catch (PersistenceException e) {
+            LoggerUtil.log("Erro de persistência ao adicionar locação: " + e.getMessage());
             System.out.println("Erro de persistência ao adicionar locação: " + e.getMessage());
         } catch (IllegalArgumentException e) {
+            LoggerUtil.log("Erro ao buscar cliente ou filme: " + e.getMessage());
             System.out.println("Erro ao buscar cliente ou filme: " + e.getMessage());
         }
     }
@@ -49,11 +55,15 @@ public class LocacaoController {
 
             Locacao locacao = LocacaoFactory.criar(cliente, filme, dataAluguel, dataDevolucao, valor, status, id);
             locacaoDAO.atualizar(locacao);
+            LoggerUtil.log("Locação atualizada: ID " + id);
         } catch (InvalidAttributesException e) {
+            LoggerUtil.log("Erro ao atualizar locação: " + e.getMessage());
             System.out.println("Erro ao atualizar locação: " + e.getMessage());
         } catch (PersistenceException e) {
+            LoggerUtil.log("Erro de persistência ao atualizar locação: " + e.getMessage());
             System.out.println("Erro de persistência ao atualizar locação: " + e.getMessage());
         } catch (IllegalArgumentException e) {
+            LoggerUtil.log("Erro ao buscar cliente ou filme: " + e.getMessage());
             System.out.println("Erro ao buscar cliente ou filme: " + e.getMessage());
         }
     }
@@ -61,20 +71,27 @@ public class LocacaoController {
     public void deletarLocacao(int id) {
         try {
             locacaoDAO.deletar(id);
+            LoggerUtil.log("Locação deletada: ID " + id);
         } catch (IllegalArgumentException e) {
+            LoggerUtil.log("Erro ao deletar locação: " + e.getMessage());
             System.out.println("Erro ao deletar locação: " + e.getMessage());
         } catch (PersistenceException e) {
+            LoggerUtil.log("Erro de persistência ao deletar locação: " + e.getMessage());
             System.out.println("Erro de persistência ao deletar locação: " + e.getMessage());
         }
     }
 
     public Locacao buscarLocacaoPorId(int id) {
         try {
-            return locacaoDAO.buscarPorId(id);
+            Locacao locacao = locacaoDAO.buscarPorId(id);
+            LoggerUtil.log("Busca de locação por ID: " + id);
+            return locacao;
         } catch (IllegalArgumentException e) {
+            LoggerUtil.log("Erro ao buscar locação: " + e.getMessage());
             System.out.println("Erro ao buscar locação: " + e.getMessage());
             return null;
         } catch (PersistenceException e) {
+            LoggerUtil.log("Erro de persistência ao buscar locação: " + e.getMessage());
             System.out.println("Erro de persistência ao buscar locação: " + e.getMessage());
             return null;
         }
@@ -82,10 +99,20 @@ public class LocacaoController {
 
     public List<Locacao> listarTodasLocacoes() {
         try {
-            return locacaoDAO.buscarTodos();
+            List<Locacao> locacoes = locacaoDAO.buscarTodos();
+            LoggerUtil.log("Listagem de todas as locações.");
+            return locacoes;
         } catch (PersistenceException e) {
+            LoggerUtil.log("Erro ao listar locações: " + e.getMessage());
             System.out.println("Erro ao listar locações: " + e.getMessage());
             return null;
+        }
+    }
+
+    public void registrarDevolucao(Locacao locacao) {
+        if (locacao != null) {
+            LoggerUtil
+                    .log("Filme devolvido: Locação ID " + locacao.getId() + ", Filme ID " + locacao.getFilme().getId());
         }
     }
 
@@ -93,5 +120,6 @@ public class LocacaoController {
         locacaoDAO.fecharConexao();
         clienteDAO.fecharConexao();
         filmeDAO.fecharConexao();
+        LoggerUtil.log("Conexões com DAOs de Locação, Cliente e Filme fechadas.");
     }
 }

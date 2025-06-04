@@ -1,5 +1,6 @@
 package locadora.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import javax.persistence.Entity;
@@ -12,7 +13,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @Table(name = "locacao")
-public class Locacao {
+public class Locacao implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

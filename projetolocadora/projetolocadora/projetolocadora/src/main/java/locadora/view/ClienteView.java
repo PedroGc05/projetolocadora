@@ -431,6 +431,7 @@ public class ClienteView {
                         locacao.getValor(),
                         locacao.getStatus(),
                         locacao.getId());
+                locacaoController.registrarDevolucao(locacao);
                 System.out.println("Filme devolvido com sucesso.");
             } else {
                 System.out.println("Locação não encontrada ou já devolvida.");

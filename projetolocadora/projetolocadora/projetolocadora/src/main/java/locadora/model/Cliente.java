@@ -4,11 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "cliente")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Cliente extends Pessoa {
+public class Cliente extends Pessoa implements Serializable {
     private String endereco;
     private String email;
 
