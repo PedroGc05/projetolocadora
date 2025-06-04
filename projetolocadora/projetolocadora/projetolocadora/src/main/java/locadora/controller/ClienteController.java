@@ -4,9 +4,7 @@ import locadora.dal.ClienteDAO;
 import locadora.factory.ClienteFactory;
 import locadora.model.Cliente;
 import locadora.util.LoggerUtil;
-import locadora.util.SerializacaoUtil;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.naming.directory.InvalidAttributesException;

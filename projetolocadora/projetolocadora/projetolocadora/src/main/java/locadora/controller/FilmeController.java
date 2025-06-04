@@ -4,9 +4,7 @@ import locadora.dal.FilmeDAO;
 import locadora.factory.FilmeFactory;
 import locadora.model.Filme;
 import locadora.util.LoggerUtil;
-import locadora.util.SerializacaoUtil;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.naming.directory.InvalidAttributesException;
