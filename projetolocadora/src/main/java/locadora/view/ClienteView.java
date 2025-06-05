@@ -206,7 +206,7 @@ public class ClienteView {
             System.out.println("Nenhum cliente cadastrado.");
         } else {
             clientes.forEach(
-                    cliente -> System.out.println("ID: " + cliente.getCpf() + " - Nome: " + cliente.getNome()));
+                    cliente -> System.out.println("ID: " + cliente.getId() + " - Nome: " + cliente.getNome()));
         }
     }
 
