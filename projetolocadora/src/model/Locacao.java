@@ -1,31 +1,13 @@
-package locadora.model;
+package model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
-@Entity
-@Table(name = "locacao")
 public class Locacao implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @ManyToOne
-    @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
-
-    @ManyToOne
-    @JoinColumn(name = "id_filme", nullable = false)
     private Filme filme;
-
     private String dataAluguel;
     private String dataDevolucao;
     private double valor;

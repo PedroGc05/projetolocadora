@@ -1,11 +1,10 @@
-package locadora.factory;
+package factory;
 
 import javax.naming.directory.InvalidAttributesException;
-
-import locadora.model.Filme;
+import model.Filme;
 
 public class FilmeFactory {
-    public static Filme criar(String titulo, String genero, int anoLancamento, int duracao, boolean disponivel, int id)
+    public static Filme criar(String titulo, String genero, int anoLancamento, int duracao, boolean disponivel)
             throws InvalidAttributesException {
         titulo = validaTexto(titulo);
         genero = validaTexto(genero);
@@ -15,7 +14,7 @@ public class FilmeFactory {
         validaAnoLancamento(anoLancamento);
         validaDuracao(duracao);
 
-        return new Filme(titulo, genero, anoLancamento, duracao, disponivel, id);
+        return new Filme(titulo, genero, anoLancamento, duracao, disponivel, 0); // ID será atribuído na DAO
     }
 
     private static String validaTexto(String texto) {

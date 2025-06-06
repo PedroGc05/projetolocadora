@@ -1,15 +1,14 @@
-package locadora.view;
+package view;
 
-import locadora.controller.ClienteController;
-import locadora.controller.FilmeController;
-import locadora.controller.LocacaoController;
-import locadora.model.Cliente;
-import locadora.model.Filme;
-import locadora.model.Locacao;
-
+import controller.ClienteController;
+import controller.FilmeController;
+import controller.LocacaoController;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import model.Cliente;
+import model.Filme;
+import model.Locacao;
 
 public class ClienteView {
 
@@ -45,8 +44,6 @@ public class ClienteView {
                 scanner.nextLine();
             }
         } while (opcao != 0);
-
-        fecharConexoes();
     }
 
     private void menuClientes() {
@@ -156,7 +153,7 @@ public class ClienteView {
             String endereco = scanner.nextLine();
             System.out.print("E-mail: ");
             String email = scanner.nextLine();
-            clienteController.adicionarCliente(nome, cpf, telefone, endereco, email, 0);
+            clienteController.adicionarCliente(nome, cpf, telefone, endereco, email);
             System.out.println("Cliente cadastrado com sucesso!");
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
@@ -182,7 +179,7 @@ public class ClienteView {
             clienteController.atualizarCliente(nome, cpf, telefone, endereco, email, id);
             System.out.println("Cliente atualizado com sucesso!");
         } catch (InputMismatchException e) {
-            System.out.println("ID inválido.");
+            System.out.println("Dados inválidos.");
             scanner.nextLine();
         }
     }
@@ -205,8 +202,7 @@ public class ClienteView {
         if (clientes == null || clientes.isEmpty()) {
             System.out.println("Nenhum cliente cadastrado.");
         } else {
-            clientes.forEach(
-                    cliente -> System.out.println("ID: " + cliente.getId() + " - Nome: " + cliente.getNome()));
+            clientes.forEach(cliente -> System.out.println("ID: " + cliente.getId() + " - Nome: " + cliente.getNome()));
         }
     }
 
@@ -241,10 +237,8 @@ public class ClienteView {
             int duracao = scanner.nextInt();
             System.out.print("Disponível (true/false): ");
             boolean disponivel = scanner.nextBoolean();
-            System.out.print("ID: ");
-            int id = scanner.nextInt();
             scanner.nextLine();
-            filmeController.adicionarFilme(titulo, genero, ano, duracao, disponivel, id);
+            filmeController.adicionarFilme(titulo, genero, ano, duracao, disponivel);
             System.out.println("Filme cadastrado com sucesso!");
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
@@ -334,10 +328,7 @@ public class ClienteView {
             scanner.nextLine();
             System.out.print("Status (Alugado/Devolvido): ");
             String status = scanner.nextLine();
-            System.out.print("ID da locação: ");
-            int id = scanner.nextInt();
-            scanner.nextLine();
-            locacaoController.adicionarLocacao(clienteId, filmeId, dataAluguel, dataDevolucao, valor, status, id);
+            locacaoController.adicionarLocacao(clienteId, filmeId, dataAluguel, dataDevolucao, valor, status);
             System.out.println("Parabéns, filme alugado, aproveite!");
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
@@ -440,12 +431,5 @@ public class ClienteView {
             System.out.println("ID inválido.");
             scanner.nextLine();
         }
-    }
-
-    private void fecharConexoes() {
-        clienteController.fecharConexao();
-        filmeController.fecharConexao();
-        locacaoController.fecharConexao();
-        scanner.close();
     }
 }

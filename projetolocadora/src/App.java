@@ -1,8 +1,6 @@
-package locadora;
+import view.ClienteView;
 
-import locadora.view.ClienteView;
-
-public class Main {
+public class App {
     public static void main(String[] args) {
         new ClienteView().exibirMenu();
     }

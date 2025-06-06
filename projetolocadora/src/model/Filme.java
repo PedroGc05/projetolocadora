@@ -1,28 +1,14 @@
-package locadora.model;
+package model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "filme")
 public class Filme implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     private String titulo;
     private String genero;
     private int anoLancamento;
     private int duracao;
     private boolean disponivel;
-
-    public Filme() {
-    }
 
     public Filme(String titulo, String genero, int anoLancamento, int duracao, boolean disponivel, int id) {
         this.titulo = titulo;

@@ -1,8 +1,8 @@
-package locadora.factory;
+package factory;
 
 import javax.naming.directory.InvalidAttributesException;
 
-import locadora.model.Cliente;
+import model.Cliente;
 
 public class ClienteFactory {
     public static Cliente criar(String nome, String cpf, String telefone, String endereco, String email)
@@ -19,7 +19,7 @@ public class ClienteFactory {
         validaCampoObrigatorio(telefone, "Telefone é obrigatório");
         validaCampoObrigatorio(email, "E-mail é obrigatório");
 
-        return new Cliente(nome, cpf, telefone, endereco, email, 0);
+        return new Cliente(nome, cpf, telefone, endereco, email, 0); // ID será atribuído na DAO
     }
 
     private static String validaTexto(String texto) {
