@@ -1,13 +1,40 @@
 package dal;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import model.Filme;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 public class FilmeDAO implements InterfaceDAO<Filme> {
-    private static final String ARQUIVO_SERIALIZACAO = "projetolocadora/projetolocadora/src/dados/filme/filmes.ser";
+    private static final String CAMINHO = "src/dados/filme";
     private List<Filme> filmes;
+
+    public static void salvar(List<Filme> filmes) throws IOException {
+        File diretorio = new File(CAMINHO);
+        diretorio.mkdirs();
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(CAMINHO + "/filmes.ser"))) {
+            oos.writeObject(filmes);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Filme> carregar() throws IOException, ClassNotFoundException {
+
+        File arquivo = new File(CAMINHO + "/filmes.ser");
+        if (!arquivo.exists())
+            return new ArrayList<>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
+            return (List<Filme>) ois.readObject();
+        }
+    }
 
     public FilmeDAO() {
         this.filmes = desserializarFilmes();
@@ -60,7 +87,7 @@ public class FilmeDAO implements InterfaceDAO<Filme> {
 
     private void serializarFilmes() {
         try {
-            SerializacaoDAO.salvarLista(filmes, ARQUIVO_SERIALIZACAO);
+            salvar(filmes);
         } catch (IOException e) {
             System.out.println("Erro ao serializar filmes: " + e.getMessage());
         }
@@ -68,7 +95,7 @@ public class FilmeDAO implements InterfaceDAO<Filme> {
 
     private List<Filme> desserializarFilmes() {
         try {
-            return SerializacaoDAO.carregarLista(ARQUIVO_SERIALIZACAO);
+            return carregar();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Erro ao desserializar filmes: " + e.getMessage());
             return null;

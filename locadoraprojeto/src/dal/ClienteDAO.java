@@ -1,13 +1,39 @@
 package dal;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import model.Cliente;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 public class ClienteDAO implements InterfaceDAO<Cliente> {
-    private static final String ARQUIVO_SERIALIZACAO = "projetolocadora/projetolocadora/src/dados/cliente/clientes.ser";
+    private static final String CAMINHO = "src/dados/cliente";
     private List<Cliente> clientes;
+
+    public static void salvar(List<Cliente> clientes) throws IOException {
+        File diretorio = new File(CAMINHO);
+        diretorio.mkdirs();
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(CAMINHO + "/clientes.ser"))) {
+            oos.writeObject(clientes);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Cliente> carregar() throws IOException, ClassNotFoundException {
+
+        File arquivo = new File(CAMINHO + "/clientes.ser");
+        if (!arquivo.exists())
+            return new ArrayList<>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
+            return (List<Cliente>) ois.readObject();
+        }
+    }
 
     public ClienteDAO() {
         this.clientes = desserializarClientes();
@@ -18,6 +44,9 @@ public class ClienteDAO implements InterfaceDAO<Cliente> {
 
     @Override
     public void salvar(Cliente cliente) {
+        if (cliente.getNome() == null || cliente.getNome().isEmpty()) {
+            throw new IllegalArgumentException("Nome do cliente não pode ser nulo ou vazio.");
+        }
         cliente.setId(gerarProximoId());
         clientes.add(cliente);
         serializarClientes();
@@ -67,7 +96,7 @@ public class ClienteDAO implements InterfaceDAO<Cliente> {
 
     private void serializarClientes() {
         try {
-            SerializacaoDAO.salvarLista(clientes, ARQUIVO_SERIALIZACAO);
+            salvar(clientes);
         } catch (IOException e) {
             System.out.println("Erro ao serializar clientes: " + e.getMessage());
         }
@@ -75,7 +104,7 @@ public class ClienteDAO implements InterfaceDAO<Cliente> {
 
     private List<Cliente> desserializarClientes() {
         try {
-            return SerializacaoDAO.carregarLista(ARQUIVO_SERIALIZACAO);
+            return carregar();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Erro ao desserializar clientes: " + e.getMessage());
             return null;

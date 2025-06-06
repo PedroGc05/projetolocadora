@@ -1,6 +1,8 @@
 package model;
 
-public abstract class Pessoa {
+import java.io.Serializable;
+
+public abstract class Pessoa implements Serializable {
     private int id;
     private String nome;
     private String cpf;

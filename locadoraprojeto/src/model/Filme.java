@@ -19,6 +19,9 @@ public class Filme implements Serializable {
         this.id = id;
     }
 
+    public Filme() {
+    }
+
     public String getTitulo() {
         return titulo;
     }

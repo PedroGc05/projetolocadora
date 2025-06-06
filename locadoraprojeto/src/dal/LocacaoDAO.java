@@ -1,13 +1,39 @@
 package dal;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Locacao;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 public class LocacaoDAO implements InterfaceDAO<Locacao> {
-    private static final String ARQUIVO_SERIALIZACAO = "projetolocadora/projetolocadora/src/dados/locacao/locacoes.ser";
+    private static final String CAMINHO = "src/dados/locacao";
     private List<Locacao> locacoes;
+
+    public static void salvar(List<Locacao> locacoes) throws IOException {
+        File diretorio = new File(CAMINHO);
+        diretorio.mkdirs();
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(CAMINHO + "/locacoes.ser"))) {
+            oos.writeObject(locacoes);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Locacao> carregar() throws IOException, ClassNotFoundException {
+
+        File arquivo = new File(CAMINHO + "/locacoes.ser");
+        if (!arquivo.exists())
+            return new ArrayList<>();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(arquivo))) {
+            return (List<Locacao>) ois.readObject();
+        }
+    }
 
     public LocacaoDAO() {
         this.locacoes = desserializarLocacoes();
@@ -60,7 +86,7 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
 
     private void serializarLocacoes() {
         try {
-            SerializacaoDAO.salvarLista(locacoes, ARQUIVO_SERIALIZACAO);
+            salvar(locacoes);
         } catch (IOException e) {
             System.out.println("Erro ao serializar locações: " + e.getMessage());
         }
@@ -68,7 +94,7 @@ public class LocacaoDAO implements InterfaceDAO<Locacao> {
 
     private List<Locacao> desserializarLocacoes() {
         try {
-            return SerializacaoDAO.carregarLista(ARQUIVO_SERIALIZACAO);
+            return carregar();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Erro ao desserializar locações: " + e.getMessage());
             return null;

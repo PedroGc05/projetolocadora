@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 
 public class LoggerUtil {
-    private static final String LOG_DIR = "projetolocadora/projetolocadora/src/logs";
+    private static final String LOG_DIR = "logs";
     private static final String LOG_FILE = LOG_DIR + File.separator + "log_locadora.txt";
 
     public static void log(String mensagem) {

@@ -12,6 +12,10 @@ public class Cliente extends Pessoa implements Serializable {
         this.email = email;
     }
 
+    public Cliente() {
+        super();
+    }
+
     public String getEndereco() {
         return endereco;
     }
