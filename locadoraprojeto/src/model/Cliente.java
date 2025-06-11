@@ -1,8 +1,6 @@
 package model;
 
-import java.io.Serializable;
-
-public class Cliente extends Pessoa implements Serializable {
+public class Cliente extends Pessoa {
     private String endereco;
     private String email;
 
@@ -32,4 +30,10 @@ public class Cliente extends Pessoa implements Serializable {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() +
+                ", Endereco: " + endereco +
+                ", Email: " + email;
+    }
 }

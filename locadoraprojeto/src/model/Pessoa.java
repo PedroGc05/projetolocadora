@@ -49,4 +49,12 @@ public abstract class Pessoa implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + id +
+                ", Nome: " + nome +
+                ", CPF: " + cpf +
+                ", Telefone: " + telefone;
+    }
 }
