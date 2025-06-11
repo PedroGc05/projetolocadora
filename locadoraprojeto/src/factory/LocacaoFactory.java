@@ -17,7 +17,7 @@ public class LocacaoFactory {
         validaCliente(cliente);
         validaFilme(filme);
 
-        return new Locacao(0, cliente, filme, dataAluguel, dataDevolucao, valor, status); // ID será atribuído na DAO
+        return new Locacao(0, cliente, filme, dataAluguel, dataDevolucao, valor, status);
     }
 
     private static String validaTexto(String texto) {

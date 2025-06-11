@@ -19,7 +19,7 @@ public class ClienteFactory {
         validaCampoObrigatorio(telefone, "Telefone é obrigatório");
         validaCampoObrigatorio(email, "E-mail é obrigatório");
 
-        return new Cliente(nome, cpf, telefone, endereco, email, 0); // ID será atribuído na DAO
+        return new Cliente(nome, cpf, telefone, endereco, email, 0);
     }
 
     private static String validaTexto(String texto) {

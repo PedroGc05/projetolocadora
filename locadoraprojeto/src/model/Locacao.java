@@ -139,13 +139,11 @@ public class Locacao implements Serializable {
 
         LocalDate fim = dataDevolucao != null ? dataDevolucao : LocalDate.now();
 
-        // Garantir que a data de devolução não seja anterior à data de aluguel
         if (fim.isBefore(dataAluguel)) {
             return 0.0;
         }
 
         long dias = ChronoUnit.DAYS.between(dataAluguel, fim);
-        // Mínimo de um dia
         dias = Math.max(1, dias);
 
         double valorBase = dias * PRECO_DIA;

@@ -14,7 +14,7 @@ public class FilmeFactory {
         validaAnoLancamento(anoLancamento);
         validaDuracao(duracao);
 
-        return new Filme(titulo, genero, anoLancamento, duracao, disponivel, 0); // ID será atribuído na DAO
+        return new Filme(titulo, genero, anoLancamento, duracao, disponivel, 0);
     }
 
     private static String validaTexto(String texto) {
