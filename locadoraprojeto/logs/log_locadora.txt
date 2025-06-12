@@ -1,2 +1,1 @@
-2025-06-06T20:48:50.654129400 - Cliente cadastrado: tes (CPF: tes)
-2025-06-10T20:23:25.961929300 - Cliente deletado: ID 1
+

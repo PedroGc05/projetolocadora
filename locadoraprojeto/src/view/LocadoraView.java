@@ -3,6 +3,8 @@ package view;
 import controller.ClienteController;
 import controller.FilmeController;
 import controller.LocacaoController;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -10,18 +12,19 @@ import model.Cliente;
 import model.Filme;
 import model.Locacao;
 
-public class ClienteView {
+public class LocadoraView {
 
     private final ClienteController clienteController = new ClienteController();
     private final FilmeController filmeController = new FilmeController();
     private final LocacaoController locacaoController = new LocacaoController();
     private final Scanner scanner = new Scanner(System.in);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public void exibirMenu() {
         int opcao = -1;
         do {
             System.out.println("\n======================================");
-            System.out.println("         LOCADORA DE FILMES");
+            System.out.println("        LOCADORA DE FILMES");
             System.out.println("======================================");
             System.out.println(" [1] Seção de Clientes");
             System.out.println(" [2] Seção de Filmes");
@@ -155,9 +158,8 @@ public class ClienteView {
             String email = scanner.nextLine();
             clienteController.adicionarCliente(nome, cpf, telefone, endereco, email);
             System.out.println("Cliente cadastrado com sucesso!");
-        } catch (InputMismatchException e) {
-            System.out.println("Dados inválidos.");
-            scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -181,6 +183,8 @@ public class ClienteView {
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -194,15 +198,23 @@ public class ClienteView {
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void listarClientes() {
-        List<Cliente> clientes = clienteController.listarTodosClientes();
-        if (clientes == null || clientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
-        } else {
-            clientes.forEach(cliente -> System.out.println("ID: " + cliente.getId() + " - Nome: " + cliente.getNome()));
+        try {
+            List<Cliente> clientes = clienteController.listarTodosClientes();
+            if (clientes == null || clientes.isEmpty()) {
+                System.out.println("Nenhum cliente cadastrado.");
+            } else {
+                System.out.println("\n----- Lista de Clientes -----");
+                clientes.forEach(
+                        cliente -> System.out.println("ID: " + cliente.getId() + " - Nome: " + cliente.getNome()));
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Erro ao listar clientes: " + e.getMessage());
         }
     }
 
@@ -213,6 +225,7 @@ public class ClienteView {
             scanner.nextLine();
             Cliente cliente = clienteController.buscarClientePorId(id);
             if (cliente != null) {
+                System.out.println("\n----- Detalhes do Cliente -----");
                 System.out.println("Nome: " + cliente.getNome());
                 System.out.println("CPF: " + cliente.getCpf());
                 System.out.println("Telefone: " + cliente.getTelefone());
@@ -222,6 +235,8 @@ public class ClienteView {
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -235,14 +250,17 @@ public class ClienteView {
             int ano = scanner.nextInt();
             System.out.print("Duração (min): ");
             int duracao = scanner.nextInt();
-            System.out.print("Disponível (true/false): ");
-            boolean disponivel = scanner.nextBoolean();
             scanner.nextLine();
-            filmeController.adicionarFilme(titulo, genero, ano, duracao, disponivel);
+            System.out.print("Disponível (S/N): ");
+            String disponivel = scanner.nextLine();
+            boolean disponivelBool = disponivel.equalsIgnoreCase("S");
+            filmeController.adicionarFilme(titulo, genero, ano, duracao, disponivelBool);
             System.out.println("Filme cadastrado com sucesso!");
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -259,14 +277,17 @@ public class ClienteView {
             int ano = scanner.nextInt();
             System.out.print("Duração (min): ");
             int duracao = scanner.nextInt();
-            System.out.print("Disponível (true/false): ");
-            boolean disponivel = scanner.nextBoolean();
             scanner.nextLine();
-            filmeController.atualizarFilme(titulo, genero, ano, duracao, disponivel, id);
+            System.out.print("Disponível (S/N): ");
+            String disponivel = scanner.nextLine();
+            boolean disponivelBool = disponivel.equalsIgnoreCase("S");
+            filmeController.atualizarFilme(titulo, genero, ano, duracao, disponivelBool, id);
             System.out.println("Filme atualizado com sucesso!");
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -280,16 +301,23 @@ public class ClienteView {
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void listarFilmes() {
-        List<Filme> filmes = filmeController.listarTodosFilmes();
-        if (filmes == null || filmes.isEmpty()) {
-            System.out.println("Nenhum filme cadastrado.");
-        } else {
-            filmes.forEach(filme -> System.out.println("ID: " + filme.getId() + " - Título: " + filme.getTitulo()
-                    + " - Disponível: " + filme.isDisponivel()));
+        try {
+            List<Filme> filmes = filmeController.listarTodosFilmes();
+            if (filmes == null || filmes.isEmpty()) {
+                System.out.println("Nenhum filme cadastrado.");
+            } else {
+                System.out.println("\n----- Lista de Filmes -----");
+                filmes.forEach(filme -> System.out.println("ID: " + filme.getId() + " - Título: " + filme.getTitulo()
+                        + " - Disponível: " + (filme.isDisponivel() ? "Sim" : "Não")));
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Erro ao listar filmes: " + e.getMessage());
         }
     }
 
@@ -300,39 +328,83 @@ public class ClienteView {
             scanner.nextLine();
             Filme filme = filmeController.buscarFilmePorId(id);
             if (filme != null) {
+                System.out.println("\n----- Detalhes do Filme -----");
                 System.out.println("Título: " + filme.getTitulo());
                 System.out.println("Gênero: " + filme.getGenero());
                 System.out.println("Ano: " + filme.getAnoLancamento());
-                System.out.println("Duração: " + filme.getDuracao());
-                System.out.println("Disponível: " + filme.isDisponivel());
+                System.out.println("Duração: " + filme.getDuracao() + " minutos");
+                System.out.println("Disponível: " + (filme.isDisponivel() ? "Sim" : "Não"));
             }
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void realizarLocacao() {
         try {
-            System.out.print("ID do cliente: ");
+            listarClientes();
+            System.out.print("\nID do cliente: ");
             int clienteId = scanner.nextInt();
-            System.out.print("ID do filme: ");
+
+            List<Filme> filmes = filmeController.listarTodosFilmes().stream()
+                    .filter(Filme::isDisponivel)
+                    .toList();
+
+            System.out.println("\n----- Filmes Disponíveis -----");
+            if (filmes.isEmpty()) {
+                System.out.println("Não há filmes disponíveis no momento.");
+                return;
+            }
+
+            filmes.forEach(filme -> System.out.println("ID: " + filme.getId() + " - Título: " + filme.getTitulo()));
+
+            System.out.print("\nID do filme que deseja alugar: ");
             int filmeId = scanner.nextInt();
             scanner.nextLine();
-            System.out.print("Data aluguel (AAAA-MM-DD): ");
-            String dataAluguel = scanner.nextLine();
-            System.out.print("Data devolução (AAAA-MM-DD): ");
-            String dataDevolucao = scanner.nextLine();
-            System.out.print("Valor: ");
-            double valor = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.print("Status (Alugado/Devolvido): ");
-            String status = scanner.nextLine();
-            locacaoController.adicionarLocacao(clienteId, filmeId, dataAluguel, dataDevolucao, valor, status);
-            System.out.println("Parabéns, filme alugado, aproveite!");
+
+            System.out.print("Data aluguel (AAAA-MM-DD) ou deixe em branco para hoje: ");
+            String dataAluguelInput = scanner.nextLine();
+            String dataAluguel = dataAluguelInput.isEmpty() ? LocalDate.now().format(formatter) : dataAluguelInput;
+
+            LocalDate dataAluguelDate = LocalDate.parse(dataAluguel, formatter);
+            LocalDate dataDevolucaoCalculada = dataAluguelDate.plusDays(3);
+
+            System.out.println("Data prevista para devolução: " + dataDevolucaoCalculada.format(formatter));
+            System.out.print("Deseja manter esta data de devolução? (S/N): ");
+            String manterData = scanner.nextLine();
+
+            String dataDevolucao;
+            if (manterData.equalsIgnoreCase("S") || manterData.isEmpty()) {
+                dataDevolucao = dataDevolucaoCalculada.format(formatter);
+            } else {
+                System.out.print("Informe a data de devolução (AAAA-MM-DD): ");
+                dataDevolucao = scanner.nextLine();
+                if (dataDevolucao.isEmpty()) {
+                    dataDevolucao = dataDevolucaoCalculada.format(formatter);
+                }
+            }
+
+            locacaoController.adicionarLocacao(clienteId, filmeId, dataAluguel, dataDevolucao, 0.0, "Alugado");
+
+            List<Locacao> locacoes = locacaoController.listarTodasLocacoes();
+            Locacao locacaoRealizada = locacoes.get(locacoes.size() - 1);
+
+            System.out.println("\n----- Locação Realizada com Sucesso! -----");
+            System.out.println("Cliente: " + locacaoRealizada.getCliente().getNome());
+            System.out.println("Filme: " + locacaoRealizada.getFilme().getTitulo());
+            System.out.println("Data de aluguel: " + locacaoRealizada.getDataAluguel());
+            System.out.println("Data prevista de devolução: " + locacaoRealizada.getDataDevolucao());
+            System.out.println("Valor da locação: R$ " + String.format("%.2f", locacaoRealizada.getValor()));
+            System.out.println("\nParabéns, filme alugado com sucesso! Aproveite!");
+
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -340,25 +412,56 @@ public class ClienteView {
         try {
             System.out.print("ID da locação: ");
             int id = scanner.nextInt();
-            System.out.print("ID do cliente: ");
+
+            Locacao locacaoAtual = locacaoController.buscarLocacaoPorId(id);
+            System.out.println("\n----- Detalhes da Locação Atual -----");
+            System.out.println("Cliente: " + locacaoAtual.getCliente().getNome() + " (ID: "
+                    + locacaoAtual.getCliente().getId() + ")");
+            System.out.println(
+                    "Filme: " + locacaoAtual.getFilme().getTitulo() + " (ID: " + locacaoAtual.getFilme().getId() + ")");
+            System.out.println("Data de aluguel: " + locacaoAtual.getDataAluguel());
+            System.out.println("Data de devolução: " + locacaoAtual.getDataDevolucao());
+            System.out.println("Status: " + locacaoAtual.getStatus());
+
+            System.out.print("\nNovo ID do cliente (atual: " + locacaoAtual.getCliente().getId() + "): ");
             int clienteId = scanner.nextInt();
-            System.out.print("ID do filme: ");
+            System.out.print("Novo ID do filme (atual: " + locacaoAtual.getFilme().getId() + "): ");
             int filmeId = scanner.nextInt();
             scanner.nextLine();
-            System.out.print("Data aluguel (AAAA-MM-DD): ");
+            System.out.print("Nova data de aluguel (atual: " + locacaoAtual.getDataAluguel() + "): ");
             String dataAluguel = scanner.nextLine();
-            System.out.print("Data devolução (AAAA-MM-DD): ");
+            if (dataAluguel.isEmpty()) {
+                dataAluguel = locacaoAtual.getDataAluguel();
+            }
+            System.out.print("Nova data de devolução (atual: " + locacaoAtual.getDataDevolucao() + "): ");
             String dataDevolucao = scanner.nextLine();
-            System.out.print("Valor: ");
-            double valor = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.print("Status (Alugado/Devolvido): ");
+            if (dataDevolucao.isEmpty()) {
+                dataDevolucao = locacaoAtual.getDataDevolucao();
+            }
+            System.out.print("Novo status (Alugado/Devolvido) (atual: " + locacaoAtual.getStatus() + "): ");
             String status = scanner.nextLine();
+            if (status.isEmpty()) {
+                status = locacaoAtual.getStatus();
+            }
+
+            double valor = locacaoAtual.getValor();
+
             locacaoController.atualizarLocacao(clienteId, filmeId, dataAluguel, dataDevolucao, valor, status, id);
-            System.out.println("Alterações de locação feitas com sucesso!");
+
+            Locacao locacaoAtualizada = locacaoController.buscarLocacaoPorId(id);
+            System.out.println("\n----- Locação Atualizada com Sucesso! -----");
+            System.out.println("Cliente: " + locacaoAtualizada.getCliente().getNome());
+            System.out.println("Filme: " + locacaoAtualizada.getFilme().getTitulo());
+            System.out.println("Data de aluguel: " + locacaoAtualizada.getDataAluguel());
+            System.out.println("Data de devolução: " + locacaoAtualizada.getDataDevolucao());
+            System.out.println("Status: " + locacaoAtualizada.getStatus());
+            System.out.println("Valor atualizado: R$ " + String.format("%.2f", locacaoAtualizada.getValor()));
+
         } catch (InputMismatchException e) {
             System.out.println("Dados inválidos.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -367,22 +470,50 @@ public class ClienteView {
             System.out.print("ID da locação: ");
             int id = scanner.nextInt();
             scanner.nextLine();
-            locacaoController.deletarLocacao(id);
-            System.out.println("Locação deletada com sucesso!");
+
+            Locacao locacao = locacaoController.buscarLocacaoPorId(id);
+            System.out.println("\n----- Detalhes da Locação a ser Deletada -----");
+            System.out.println("Cliente: " + locacao.getCliente().getNome());
+            System.out.println("Filme: " + locacao.getFilme().getTitulo());
+            System.out.println("Data de aluguel: " + locacao.getDataAluguel());
+            System.out.println("Status: " + locacao.getStatus());
+
+            System.out.print("\nConfirma a exclusão desta locação? (S/N): ");
+            String confirmacao = scanner.nextLine();
+
+            if (confirmacao.equalsIgnoreCase("S")) {
+                locacaoController.deletarLocacao(id);
+                System.out.println("Locação deletada com sucesso!");
+            } else {
+                System.out.println("Operação cancelada.");
+            }
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void listarLocacoes() {
-        List<Locacao> locacoes = locacaoController.listarTodasLocacoes();
-        if (locacoes == null || locacoes.isEmpty()) {
-            System.out.println("Nenhuma locação cadastrada.");
-        } else {
-            locacoes.forEach(locacao -> System.out
-                    .println("ID: " + locacao.getId() + " - Cliente: " + locacao.getCliente().getNome() + " - Filme: "
-                            + locacao.getFilme().getTitulo() + " - Status: " + locacao.getStatus()));
+        try {
+            List<Locacao> locacoes = locacaoController.listarTodasLocacoes();
+            if (locacoes == null || locacoes.isEmpty()) {
+                System.out.println("Nenhuma locação cadastrada.");
+            } else {
+                System.out.println("\n----- Lista de Locações -----");
+                locacoes.forEach(locacao -> {
+                    System.out.println("ID: " + locacao.getId() +
+                            " - Cliente: " + locacao.getCliente().getNome() +
+                            " - Filme: " + locacao.getFilme().getTitulo() +
+                            " - Aluguel: " + locacao.getDataAluguel() +
+                            " - Devolução: " + locacao.getDataDevolucao() +
+                            " - Valor: R$ " + String.format("%.2f", locacao.getValor()) +
+                            " - Status: " + locacao.getStatus());
+                });
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Erro ao listar locações: " + e.getMessage());
         }
     }
 
@@ -393,43 +524,83 @@ public class ClienteView {
             scanner.nextLine();
             Locacao locacao = locacaoController.buscarLocacaoPorId(id);
             if (locacao != null) {
+                System.out.println("\n----- Detalhes da Locação -----");
+                System.out.println("ID: " + locacao.getId());
                 System.out.println("Cliente: " + locacao.getCliente().getNome());
                 System.out.println("Filme: " + locacao.getFilme().getTitulo());
-                System.out.println("Data aluguel: " + locacao.getDataAluguel());
-                System.out.println("Data devolução: " + locacao.getDataDevolucao());
-                System.out.println("Valor: " + locacao.getValor());
+                System.out.println("Data de aluguel: " + locacao.getDataAluguel());
+                System.out.println("Data de devolução: " + locacao.getDataDevolucao());
+                System.out.println("Valor: R$ " + String.format("%.2f", locacao.getValor()));
                 System.out.println("Status: " + locacao.getStatus());
+
+                if (locacao.getStatus().equalsIgnoreCase("Alugado")) {
+                    double valorAtual = locacaoController.calcularValorAtual(id);
+                    System.out.println("Valor atual com base na data de hoje: R$ " + String.format("%.2f", valorAtual));
+                }
             }
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 
     private void devolverFilme() {
         try {
-            System.out.print("ID da locação: ");
+            List<Locacao> locacoesEmAberto = locacaoController.listarTodasLocacoes().stream()
+                    .filter(loc -> "Alugado".equalsIgnoreCase(loc.getStatus()))
+                    .toList();
+
+            if (locacoesEmAberto.isEmpty()) {
+                System.out.println("Não há locações em aberto para devolução.");
+                return;
+            }
+
+            System.out.println("\n----- Locações em Aberto -----");
+            locacoesEmAberto.forEach(loc -> System.out.println("ID: " + loc.getId() +
+                    " - Cliente: " + loc.getCliente().getNome() +
+                    " - Filme: " + loc.getFilme().getTitulo() +
+                    " - Data aluguel: " + loc.getDataAluguel() +
+                    " - Data prevista devolução: " + loc.getDataDevolucao()));
+
+            System.out.print("\nID da locação para devolução: ");
             int id = scanner.nextInt();
             scanner.nextLine();
+
             Locacao locacao = locacaoController.buscarLocacaoPorId(id);
+
             if (locacao != null && "Alugado".equalsIgnoreCase(locacao.getStatus())) {
-                locacao.devolver();
-                locacaoController.atualizarLocacao(
-                        locacao.getCliente().getId(),
-                        locacao.getFilme().getId(),
-                        locacao.getDataAluguel(),
-                        locacao.getDataDevolucao(),
-                        locacao.getValor(),
-                        locacao.getStatus(),
-                        locacao.getId());
-                locacaoController.registrarDevolucao(locacao);
-                System.out.println("Filme devolvido com sucesso.");
+                double valorAtual = locacaoController.calcularValorAtual(id);
+
+                System.out.println("\n----- Confirmação de Devolução -----");
+                System.out.println("Cliente: " + locacao.getCliente().getNome());
+                System.out.println("Filme: " + locacao.getFilme().getTitulo());
+                System.out.println("Data de aluguel: " + locacao.getDataAluguel());
+                System.out.println("Data prevista de devolução: " + locacao.getDataDevolucao());
+                System.out.println("Data atual de devolução: " + LocalDate.now().format(formatter));
+                System.out.println("Valor a pagar: R$ " + String.format("%.2f", valorAtual));
+
+                System.out.print("\nConfirmar a devolução? (S/N): ");
+                String confirmacao = scanner.nextLine();
+
+                if (confirmacao.equalsIgnoreCase("S")) {
+                    locacaoController.registrarDevolucao(locacao);
+
+                    System.out.println("\n----- Filme Devolvido com Sucesso! -----");
+                    System.out.println("Valor pago: R$ " + String.format("%.2f", locacao.getValor()));
+                    System.out.println("Agradecemos a preferência!");
+                } else {
+                    System.out.println("Operação cancelada.");
+                }
             } else {
                 System.out.println("Locação não encontrada ou já devolvida.");
             }
         } catch (InputMismatchException e) {
             System.out.println("ID inválido.");
             scanner.nextLine();
+        } catch (RuntimeException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 }
